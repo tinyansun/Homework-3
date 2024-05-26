@@ -61,15 +61,18 @@ class EqualWeightPortfolio:
     def calculate_weights(self):
         # Get the assets by excluding the specified column
         assets = df.columns[df.columns != self.exclude]
+        num_assets = len(assets)
+        equal_weight = 1 / num_assets
+
+        # Create a DataFrame to hold the weights
         self.portfolio_weights = pd.DataFrame(index=df.index, columns=df.columns)
 
-        """
-        TODO: Complete Task 1 Below
-        """
+        # Assign equal weights to the included assets
+        self.portfolio_weights[assets] = equal_weight
 
-        """
-        TODO: Complete Task 1 Above
-        """
+        # Set the weight of the excluded asset to 0
+        self.portfolio_weights[self.exclude] = 0
+
         self.portfolio_weights.ffill(inplace=True)
         self.portfolio_weights.fillna(0, inplace=True)
 
