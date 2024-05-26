@@ -70,6 +70,7 @@ class EqualWeightPortfolio:
         num_assets = len(assets)
         weight_per_asset = 1 / num_assets
         self.portfolio_weights[assets] = weight_per_asset
+        self.portfolio_weights[self.exclude] = 0.0
 
         """
         TODO: Complete Task 1 Above
