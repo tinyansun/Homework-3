@@ -120,6 +120,11 @@ class RiskParityPortfolio:
         """
         TODO: Complete Task 2 Below
         """
+        for i in range(self.lookback + 1, len(df_returns)):
+            asset_volatilities = df_returns.iloc[i - self.lookback:i][assets].std()
+            inv_weights = 1 / asset_volatilities
+            weights = inv_weights / inv_weights.sum()
+            self.portfolio_weights.loc[df.index[i], assets] = weights.values
 
         """
         TODO: Complete Task 2 Above
