@@ -10,6 +10,8 @@ import gurobipy as gp
 import warnings
 import argparse
 
+from scipy.optimize import minimize
+
 """
 Project Setup
 """
@@ -71,13 +73,27 @@ class MyPortfolio:
             index=self.price.index, columns=self.price.columns
         )
 
-        """
-        TODO: Complete Task 4 Below
-        """
+        # Define objective function for Sharpe Ratio maximization
+        def negative_sharpe_ratio(weights):
+            portfolio_return = np.sum(self.returns[assets].mean() * weights)
+            portfolio_std_dev = np.sqrt(np.dot(weights.T, np.dot(self.returns[assets].cov(), weights)))
+            sharpe_ratio = -portfolio_return / portfolio_std_dev
+            return sharpe_ratio
 
-        """
-        TODO: Complete Task 4 Above
-        """
+        # Define optimization constraints
+        constraints = ({'type': 'eq', 'fun': lambda weights: np.sum(weights) - 1})
+
+        # Define optimization bounds
+        bounds = tuple((0, 1) for asset in range(len(assets)))
+
+        # Initial guess for weights
+        initial_weights = np.array(len(assets) * [1.0 / len(assets)])
+
+        # Perform optimization
+        result = minimize(negative_sharpe_ratio, initial_weights, method='SLSQP', bounds=bounds, constraints=constraints)
+
+        # Assign optimized weights to the portfolio
+        self.portfolio_weights[assets] = result.x
 
         self.portfolio_weights.ffill(inplace=True)
         self.portfolio_weights.fillna(0, inplace=True)
